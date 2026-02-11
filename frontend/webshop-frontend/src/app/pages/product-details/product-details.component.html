@@ -1,0 +1,14 @@
+<div *ngIf="loading" class="alert alert-info">Loading...</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div *ngIf="!loading && product" class="card">
+  <div class="card-body">
+    <h3 class="card-title">{{ product.name }}</h3>
+
+    <p class="mb-1"><b>Price:</b> {{ product.price }} EUR</p>
+    <p class="mb-1"><b>Stock:</b> {{ product.stock }}</p>
+    <p class="mb-3"><b>Category:</b> {{ getCategoryName() }}</p>
+
+    <a class="btn btn-secondary" routerLink="/products">Back</a>
+  </div>
+</div>

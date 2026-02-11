@@ -1,0 +1,81 @@
+<h2>Admin: Products (CRUD)</h2>
+
+<div *ngIf="message" class="alert alert-info">{{ message }}</div>
+
+<div class="row">
+  <div class="col-md-5">
+    <h5 class="mb-3">{{ editingId ? 'Edit Product' : 'Add Product' }}</h5>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+      <div class="mb-2">
+        <label>Name</label>
+        <input class="form-control" formControlName="name" />
+        <div class="text-danger mt-1" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+          Name is required.
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <label>Price</label>
+        <input type="number" class="form-control" formControlName="price" />
+      </div>
+
+      <div class="mb-2">
+        <label>Stock</label>
+        <input type="number" class="form-control" formControlName="stock" />
+      </div>
+
+      <div class="mb-2">
+        <label>Category</label>
+        <select class="form-select" formControlName="categoryId">
+          <option value="">-- choose --</option>
+          <option *ngFor="let c of categories" [value]="c._id">
+            {{ c.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-2">
+        <label>Image URL</label>
+        <input class="form-control" formControlName="imageUrl" />
+      </div>
+
+      <button class="btn btn-success mt-2" type="submit">
+        {{ editingId ? 'Save' : 'Create' }}
+      </button>
+
+      <button *ngIf="editingId" class="btn btn-secondary mt-2 ms-2" type="button" (click)="cancelEdit()">
+        Cancel
+      </button>
+    </form>
+  </div>
+
+  <div class="col-md-7">
+    <h5 class="mb-3">Existing products</h5>
+
+    <table class="table table-striped table-sm">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Category</th>
+        <th style="width: 140px;"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let p of products">
+        <td>{{ p.name }}</td>
+        <td>{{ p.price }}</td>
+        <td>{{ p.stock }}</td>
+        <td>{{ getCategoryName(p) }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-primary me-2" (click)="startEdit(p)">Edit</button>
+          <button class="btn btn-sm btn-outline-danger" (click)="delete(p)">Delete</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<h2>Products</h2>
+
+<div *ngIf="loading" class="alert alert-info">Loading...</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div class="alert alert-secondary" *ngIf="rateUsd">
+  Current EUR → USD rate: <b>{{ rateUsd }}</b>
+</div>
+
+<div class="row" *ngIf="!loading && !error">
+  <div class="col-md-4 mb-3" *ngFor="let p of products">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">{{ p.name }}</h5>
+        <p class="card-text mb-1"><b>Price:</b> {{ p.price | priceUsd: rateUsd }}</p>
+        <p class="card-text mb-1"><b>Stock:</b> {{ p.stock }}</p>
+        <p class="card-text"><b>Category:</b> {{ getCategoryName(p) }}</p>
+
+        <a class="btn btn-primary" [routerLink]="['/products', p._id]">
+          View details
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
