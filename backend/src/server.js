@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -12,7 +13,9 @@ const productRoutes = require("./routes/product.routes");
 const ratesRoutes = require("./routes/rates.routes");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: "https://webshop-project-frontend.onrender.com"
+}));
 app.use(express.json());
 
 app.get("/api/health", (req, res) => {
