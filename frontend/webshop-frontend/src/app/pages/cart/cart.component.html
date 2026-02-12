@@ -1,0 +1,15 @@
+<h2>Your Cart</h2>
+
+<div *ngFor="let item of cartService.cart">
+  <p>
+    {{ item.product.name }} -
+    {{ item.quantity }} pcs
+    ({{ item.product.price }} €)
+  </p>
+</div>
+
+<h3>Total: {{ cartService.getTotal() }} €</h3>
+
+<button class="btn btn-success" (click)="checkout()">
+  Checkout (Pay on delivery)
+</button>

@@ -17,6 +17,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AdminProductsComponent } from './pages/admin-products/admin-products.component';
 import { PriceUsdPipe } from './pipes/price-usd.pipe';
 import { CategoriesComponent } from './pages/categories/categories.component';
+import { CartComponent } from './pages/cart/cart.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { CategoriesComponent } from './pages/categories/categories.component';
     RegisterComponent,
     AdminProductsComponent,
     PriceUsdPipe,
-    CategoriesComponent
+    CategoriesComponent,
+    CartComponent
   ],
   imports: [
     BrowserModule,

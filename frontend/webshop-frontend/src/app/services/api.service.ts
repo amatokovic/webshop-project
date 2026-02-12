@@ -58,4 +58,8 @@ export class ApiService {
   getEurToUsdRate(): Observable<{ base: string; date: string; rate: number }> {
     return this.http.get<{ base: string; date: string; rate: number }>(`${this.baseUrl}/rates/eur-usd`);
   }
+
+  createOrder(data: any) {
+    return this.http.post(`${this.baseUrl}/orders`, data);
+  }
 }

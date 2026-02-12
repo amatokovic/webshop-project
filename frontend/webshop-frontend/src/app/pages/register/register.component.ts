@@ -18,6 +18,7 @@ export class RegisterComponent {
     private router: Router
   ) {
     this.form = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
@@ -31,10 +32,10 @@ export class RegisterComponent {
       return;
     }
 
-    const { email, password } = this.form.value;
+    const { name, email, password } = this.form.value;
     this.loading = true;
 
-    this.auth.register(email, password).subscribe({
+    this.auth.register(name, email, password).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigateByUrl('/products');

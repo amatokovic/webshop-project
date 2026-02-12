@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 
 interface AuthResponse {
   token: string;
-  user: { id: string; email: string; role: string };
+  user: { id: string; name: string; email: string; role: string };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -17,8 +17,9 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  register(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, { email, password })
+  register(name: string, email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/auth/register`, { name, email, password })
       .pipe(tap((res) => this.store(res)));
   }
 
@@ -42,6 +43,10 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'admin';
   }
 
   private store(res: AuthResponse): void {
