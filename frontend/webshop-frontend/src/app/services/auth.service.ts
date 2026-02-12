@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 interface AuthResponse {
   token: string;
@@ -10,19 +11,19 @@ interface AuthResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private baseUrl = 'http://localhost:5000/api/auth';
+  private baseUrl = environment.apiUrl;
   private tokenKey = 'token';
   private roleKey = 'role';
 
   constructor(private http: HttpClient) {}
 
   register(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/register`, { email, password })
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/register`, { email, password })
       .pipe(tap((res) => this.store(res)));
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, { email, password })
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, { email, password })
       .pipe(tap((res) => this.store(res)));
   }
 
