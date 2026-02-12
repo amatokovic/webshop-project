@@ -1,0 +1,40 @@
+<h2>Admin: Orders</h2>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div *ngIf="loading" class="alert alert-secondary">Loading...</div>
+
+<div class="table-responsive" *ngIf="!loading && orders.length > 0">
+  <table class="table table-dark table-striped align-middle">
+    <thead>
+    <tr>
+      <th>Order</th>
+      <th>User</th>
+      <th>Total</th>
+      <th>Status</th>
+      <th>Created</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let o of orders">
+      <td class="small">{{ o._id }}</td>
+      <td class="small">
+        {{ o.user?.name || '—' }}<br>
+        <span class="text-muted">{{ o.user?.email || '—' }}</span>
+      </td>
+      <td>{{ o.total | number:'1.2-2' }} €</td>
+      <td style="width: 220px;">
+        <select class="form-select form-select-sm"
+                [value]="o.status"
+                (change)="changeStatus(o._id, $any($event.target).value)">
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+      </td>
+      <td class="small">{{ o.createdAt | date:'short' }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="!loading && orders.length === 0" class="alert alert-info">
+  No orders yet.
+</div>

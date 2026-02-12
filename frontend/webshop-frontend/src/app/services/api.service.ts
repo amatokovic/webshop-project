@@ -19,6 +19,28 @@ export interface Product {
   categoryId: { _id: string; name: string } | string;
 }
 
+export interface OrderItemPayload {
+  productId: string;
+  quantity: number;
+}
+
+export interface Order {
+  _id: string;
+  user?: any;
+  items: Array<{
+    product: string;
+    name: string;
+    price: number;
+    imageUrl?: string;
+    quantity: number;
+    lineTotal: number;
+  }>;
+  total: number;
+  status: string;
+  paymentMethod: string;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -59,7 +81,23 @@ export class ApiService {
     return this.http.get<{ base: string; date: string; rate: number }>(`${this.baseUrl}/rates/eur-usd`);
   }
 
-  createOrder(data: any) {
-    return this.http.post(`${this.baseUrl}/orders`, data);
+
+  createOrder(items: OrderItemPayload[]) {
+    return this.http.post<Order>(`${this.baseUrl}/orders`, {
+      items,
+      paymentMethod: 'cod'
+    });
+  }
+
+  getMyOrders() {
+    return this.http.get<Order[]>(`${this.baseUrl}/orders/my`);
+  }
+
+  getAllOrders() {
+    return this.http.get<Order[]>(`${this.baseUrl}/orders`);
+  }
+
+  updateOrderStatus(orderId: string, status: string) {
+    return this.http.patch<Order>(`${this.baseUrl}/orders/${orderId}/status`, { status });
   }
 }

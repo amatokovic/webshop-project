@@ -8,6 +8,9 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 
 import { AdminProductsComponent } from './pages/admin-products/admin-products.component';
+import { CartComponent } from './pages/cart/cart.component';
+import { MyOrdersComponent } from './pages/my-orders/my-orders.component';
+import { AdminOrdersComponent } from './pages/admin-orders/admin-orders.component';
 import { AdminGuard } from './guards/admin.guard';
 import { CategoriesComponent } from './pages/categories/categories.component';
 
@@ -19,6 +22,9 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'categories', component: CategoriesComponent },
   { path: 'admin/products', component: AdminProductsComponent, canActivate: [AdminGuard] },
+  { path: 'cart', component: CartComponent },
+  { path: 'my-orders', component: MyOrdersComponent },
+  { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AdminGuard] },
   { path: '**', redirectTo: '' }
 ];
 

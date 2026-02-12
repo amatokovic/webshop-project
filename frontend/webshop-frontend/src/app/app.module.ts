@@ -18,6 +18,8 @@ import { AdminProductsComponent } from './pages/admin-products/admin-products.co
 import { PriceUsdPipe } from './pipes/price-usd.pipe';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { CartComponent } from './pages/cart/cart.component';
+import { MyOrdersComponent } from './pages/my-orders/my-orders.component';
+import { AdminOrdersComponent } from './pages/admin-orders/admin-orders.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { CartComponent } from './pages/cart/cart.component';
     AdminProductsComponent,
     PriceUsdPipe,
     CategoriesComponent,
-    CartComponent
+    CartComponent,
+    MyOrdersComponent,
+    AdminOrdersComponent
   ],
   imports: [
     BrowserModule,

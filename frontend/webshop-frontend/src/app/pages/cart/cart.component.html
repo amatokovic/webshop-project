@@ -1,15 +1,54 @@
-<h2>Your Cart</h2>
-
-<div *ngFor="let item of cartService.cart">
-  <p>
-    {{ item.product.name }} -
-    {{ item.quantity }} pcs
-    ({{ item.product.price }} €)
-  </p>
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2>Cart</h2>
+  <a class="btn btn-outline-secondary" routerLink="/products">Continue shopping</a>
 </div>
 
-<h3>Total: {{ cartService.getTotal() }} €</h3>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-<button class="btn btn-success" (click)="checkout()">
-  Checkout (Pay on delivery)
-</button>
+<div *ngIf="items().length === 0" class="alert alert-info">
+  Your cart is empty.
+</div>
+
+<div *ngIf="items().length > 0" class="table-responsive">
+  <table class="table table-dark table-striped align-middle">
+    <thead>
+    <tr>
+      <th>Product</th>
+      <th style="width: 160px;">Qty</th>
+      <th style="width: 140px;">Price</th>
+      <th style="width: 140px;">Total</th>
+      <th style="width: 80px;"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let i of items()">
+      <td class="d-flex gap-3 align-items-center">
+        <img *ngIf="i.imageUrl" [src]="i.imageUrl" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+        <div>{{ i.name }}</div>
+      </td>
+
+      <td>
+        <input class="form-control"
+               type="number"
+               min="1"
+               [value]="i.quantity"
+               (input)="updateQty(i.productId, $any($event.target).value)">
+      </td>
+
+      <td>{{ i.price | number:'1.2-2' }} €</td>
+      <td>{{ (i.price * i.quantity) | number:'1.2-2' }} €</td>
+
+      <td>
+        <button class="btn btn-sm btn-danger" (click)="remove(i.productId)">X</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="items().length > 0" class="d-flex justify-content-between align-items-center mt-3">
+  <h4>Total: {{ total() | number:'1.2-2' }} €</h4>
+  <button class="btn btn-success" [disabled]="loading" (click)="checkout()">
+    {{ loading ? 'Processing...' : 'Checkout (Cash on delivery)' }}
+  </button>
+</div>

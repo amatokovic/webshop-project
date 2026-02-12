@@ -1,0 +1,37 @@
+<h2>My Orders</h2>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div *ngIf="loading" class="alert alert-secondary">Loading...</div>
+
+<div *ngIf="!loading && orders.length === 0" class="alert alert-info">
+  You have no orders.
+</div>
+
+<div class="accordion" *ngIf="orders.length > 0">
+  <div class="accordion-item" *ngFor="let o of orders; let idx = index">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#o' + idx">
+        <div class="w-100 d-flex justify-content-between">
+          <div>Order #{{ o._id }}</div>
+          <div>Status: <strong>{{ o.status }}</strong></div>
+          <div>Total: <strong>{{ o.total | number:'1.2-2' }} €</strong></div>
+        </div>
+      </button>
+    </h2>
+    <div [id]="'o' + idx" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <div class="small text-muted">Created: {{ o.createdAt | date:'medium' }}</div>
+
+        <ul class="list-group mt-2">
+          <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let it of o.items">
+            <div class="d-flex align-items-center gap-2">
+              <img *ngIf="it.imageUrl" [src]="it.imageUrl" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">
+              <div>{{ it.name }} (x{{ it.quantity }})</div>
+            </div>
+            <div>{{ it.lineTotal | number:'1.2-2' }} €</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
