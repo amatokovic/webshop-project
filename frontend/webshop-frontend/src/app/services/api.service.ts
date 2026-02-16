@@ -81,20 +81,16 @@ export class ApiService {
     return this.http.get<{ base: string; date: string; rate: number }>(`${this.baseUrl}/rates/eur-usd`);
   }
 
-
-  createOrder(items: OrderItemPayload[]) {
-    return this.http.post<Order>(`${this.baseUrl}/orders`, {
-      items,
-      paymentMethod: 'cod'
-    });
+  createOrder(payload: { paymentMethod: 'cod'; items: { productId: string; quantity: number }[] }) {
+    return this.http.post(`${this.baseUrl}/orders`, payload);
   }
 
   getMyOrders() {
-    return this.http.get<Order[]>(`${this.baseUrl}/orders/my`);
+    return this.http.get<any[]>(`${this.baseUrl}/orders/my`);
   }
 
   getAllOrders() {
-    return this.http.get<Order[]>(`${this.baseUrl}/orders`);
+    return this.http.get<any[]>(`${this.baseUrl}/orders`);
   }
 
   updateOrderStatus(orderId: string, status: string) {

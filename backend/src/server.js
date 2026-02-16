@@ -17,6 +17,8 @@ const allowedOrigins = [
     "https://webshop-project-frontend.onrender.com",
 ];
 
+app.use(express.json());
+
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
@@ -31,8 +33,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.options(/.*/, cors(corsOptions));
-
-app.use(express.json());
 
 app.get("/api/health", (req, res) => {
     res.json({ ok: true, message: "Backend radi!" });
@@ -49,7 +49,7 @@ const PORT = process.env.PORT || 5000;
 async function start() {
     try {
         await connectDb();
-        app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+        app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
     } catch (err) {
         console.error("Failed to start:", err);
         process.exit(1);

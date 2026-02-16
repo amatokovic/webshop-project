@@ -17,19 +17,26 @@ export class CartService {
     return this.read();
   }
 
+  getCount(): number {
+    return this.read().reduce((sum, i) => sum + i.quantity, 0);
+  }
+
   add(product: Product, quantity: number = 1) {
     const items = this.read();
     const existing = items.find(i => i.productId === product._id);
 
+    const qty = Number(quantity) || 1;
+    if (qty <= 0) return;
+
     if (existing) {
-      existing.quantity += quantity;
+      existing.quantity += qty;
     } else {
       items.push({
         productId: product._id,
         name: product.name,
         price: product.price,
         imageUrl: product.imageUrl,
-        quantity
+        quantity: qty
       });
     }
 
@@ -41,12 +48,14 @@ export class CartService {
     const it = items.find(i => i.productId === productId);
     if (!it) return;
 
-    if (quantity <= 0) {
+    const qty = Number(quantity);
+
+    if (!Number.isFinite(qty) || qty <= 0) {
       this.remove(productId);
       return;
     }
 
-    it.quantity = quantity;
+    it.quantity = Math.floor(qty);
     this.write(items);
   }
 
@@ -61,6 +70,10 @@ export class CartService {
 
   getTotal(): number {
     return this.read().reduce((sum, i) => sum + i.price * i.quantity, 0);
+  }
+
+  toOrderItems(): { productId: string; quantity: number }[] {
+    return this.getItems().map(i => ({ productId: i.productId, quantity: i.quantity }));
   }
 
   private read(): CartItem[] {

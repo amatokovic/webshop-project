@@ -52,17 +52,14 @@ export class CartComponent {
 
     this.loading = true;
 
-    this.api.createOrder(items.map(i => ({ productId: i.productId, quantity: i.quantity })))
-      .subscribe({
-        next: () => {
-          this.loading = false;
-          this.cart.clear();
-          this.router.navigateByUrl('/my-orders');
-        },
-        error: (err) => {
-          this.loading = false;
-          this.error = err?.error?.message || 'Checkout failed.';
-        }
-      });
+    const payload = {
+      paymentMethod: 'cod' as const,
+      items: this.cart.toOrderItems(),
+    };
+
+    this.api.createOrder({
+      paymentMethod: 'cod',
+      items: this.cart.toOrderItems()
+    })
   }
 }
