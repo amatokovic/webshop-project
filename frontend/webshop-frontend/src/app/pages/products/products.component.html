@@ -33,6 +33,7 @@
 
           <button
             class="btn btn-success"
+            *ngIf="auth.isUser()"
             (click)="cart.add(p, +qty.value)"
             [disabled]="p.stock === 0"
           >

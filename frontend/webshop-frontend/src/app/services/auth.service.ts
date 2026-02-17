@@ -50,6 +50,10 @@ export class AuthService {
     return this.getRole() === 'admin';
   }
 
+  isUser(): boolean {
+    return this.getRole() === 'user';
+  }
+
   private store(res: AuthResponse): void {
     localStorage.setItem(this.tokenKey, res.token);
     localStorage.setItem(this.roleKey, res.user.role);
