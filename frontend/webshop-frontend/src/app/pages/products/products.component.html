@@ -19,7 +19,7 @@
         <a class="btn btn-primary" [routerLink]="['/products', p._id]">
           View details
         </a>
-        <div class="d-flex align-items-center gap-2 mt-2">
+        <div class="d-flex align-items-center gap-2 mt-2" *ngIf="auth.isUser()">
 
           <input
             #qty
@@ -33,7 +33,6 @@
 
           <button
             class="btn btn-success"
-            *ngIf="auth.isUser()"
             (click)="cart.add(p, +qty.value)"
             [disabled]="p.stock === 0"
           >
