@@ -31,13 +31,12 @@
             value="1"
           />
 
-          <button
-            class="btn btn-success"
-            (click)="cart.add(p, +qty.value)"
-            [disabled]="p.stock === 0"
-          >
+          <button class="btn btn-success ms-2"
+                  (click)="addToCart(p)"
+                  [disabled]="p.stock <= 0">
             Add to cart
           </button>
+
         </div>
       </div>
     </div>

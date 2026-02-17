@@ -37,6 +37,14 @@ export class CartComponent {
   }
 
   checkout() {
+    const orderedItems = this.cart.getItems();
+    const invalid = orderedItems.find(i => i.quantity > i.stock);
+
+    if (invalid) {
+      this.error = `You selected ${invalid.quantity} but only ${invalid.stock} is available for "${invalid.name}".`;
+      return;
+    }
+
     this.error = '';
 
     if (!this.auth.isLoggedIn()) {

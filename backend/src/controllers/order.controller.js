@@ -21,7 +21,7 @@ async function createOrder(req, res) {
     let total = 0;
 
     for (const i of items) {
-        const productId = String(i.productId);
+        const productId = String(i.productId).trim();
         const p = productMap.get(productId);
         const qty = Number(i.quantity);
 

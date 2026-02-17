@@ -40,4 +40,9 @@ export class ProductsComponent implements OnInit {
   getCategoryName(p: Product): string {
     return typeof p.categoryId === 'string' ? p.categoryId : p.categoryId.name;
   }
+
+  addToCart(p: any) {
+    this.cart.add(p, 1);
+  }
+
 }

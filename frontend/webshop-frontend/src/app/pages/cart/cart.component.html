@@ -31,8 +31,13 @@
         <input class="form-control"
                type="number"
                min="1"
+               [max]="i.stock"
                [value]="i.quantity"
                (input)="updateQty(i.productId, $any($event.target).value)">
+
+        <div class="small text-warning" *ngIf="i.quantity >= i.stock">
+          Max available: {{ i.stock }}
+        </div>
       </td>
 
       <td>{{ i.price | number:'1.2-2' }} €</td>
@@ -49,7 +54,8 @@
 <div *ngIf="items().length > 0" class="d-flex justify-content-between align-items-center mt-3">
   <h4>Total: {{ total() | number:'1.2-2' }} €</h4>
   <button class="btn btn-success"
-          (click)="checkout()"
+          (click)="
+          checkout()"
           [disabled]="loading || items().length === 0">
     {{ loading ? "Placing order..." : "Checkout (Cash on delivery)" }}
   </button>

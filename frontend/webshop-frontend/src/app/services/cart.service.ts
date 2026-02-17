@@ -7,6 +7,7 @@ export interface CartItem {
   price: number;
   imageUrl?: string;
   quantity: number;
+  stock: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -25,18 +26,20 @@ export class CartService {
     const items = this.read();
     const existing = items.find(i => i.productId === product._id);
 
-    const qty = Number(quantity) || 1;
-    if (qty <= 0) return;
+    const stock = Number(product.stock ?? 0);
+    const safeQty = Math.max(1, Math.min(quantity, stock || 1));
 
     if (existing) {
-      existing.quantity += qty;
+      existing.stock = stock;
+      existing.quantity = Math.min(existing.quantity + safeQty, existing.stock);
     } else {
       items.push({
         productId: product._id,
         name: product.name,
         price: product.price,
         imageUrl: product.imageUrl,
-        quantity: qty
+        quantity: safeQty,
+        stock
       });
     }
 
@@ -48,14 +51,15 @@ export class CartService {
     const it = items.find(i => i.productId === productId);
     if (!it) return;
 
-    const qty = Number(quantity);
+    const q = Number(quantity);
+    if (!Number.isFinite(q)) return;
 
-    if (!Number.isFinite(qty) || qty <= 0) {
+    if (q <= 0) {
       this.remove(productId);
       return;
     }
 
-    it.quantity = Math.floor(qty);
+    it.quantity = Math.min(q, it.stock);
     this.write(items);
   }
 
