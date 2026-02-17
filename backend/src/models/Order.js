@@ -17,7 +17,6 @@ const orderSchema = new mongoose.Schema(
         items: { type: [orderItemSchema], required: true, validate: v => v.length > 0 },
 
         paymentMethod: { type: String, enum: ["cod"], default: "cod" },
-        status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
 
         total: { type: Number, required: true },
     },
