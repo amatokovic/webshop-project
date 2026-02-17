@@ -1,22 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService, Category } from '../../services/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.component.html'
 })
 export class CategoriesComponent implements OnInit {
+
   categories: Category[] = [];
-  loading = true;
+  loading = false;
   error = '';
   message = '';
 
-  form: FormGroup;
+  editingId: string | null = null;
 
-  constructor(private api: ApiService, private fb: FormBuilder) {
-    this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
+  createForm!: FormGroup;
+  editForm!: FormGroup;
+
+  constructor(
+    private api: ApiService,
+    private fb: FormBuilder,
+    public auth: AuthService
+  ) {
+    this.createForm = this.fb.group({
+      name: ['', [Validators.required]],
+      description: ['']
+    });
+
+    this.editForm = this.fb.group({
+      name: ['', [Validators.required]],
       description: ['']
     });
   }
@@ -25,8 +39,9 @@ export class CategoriesComponent implements OnInit {
     this.load();
   }
 
-  load(): void {
+  load() {
     this.loading = true;
+
     this.api.getCategories().subscribe({
       next: (data) => {
         this.categories = data;
@@ -39,23 +54,74 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
-  submit(): void {
-    this.message = '';
+  create() {
     this.error = '';
+    this.message = '';
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    if (this.createForm.invalid) {
+      this.createForm.markAllAsTouched();
       return;
     }
 
-    this.api.createCategory(this.form.value).subscribe({
+    this.api.createCategory(this.createForm.value).subscribe({
       next: () => {
-        this.message = 'Category created!';
-        this.form.reset();
+        this.message = 'Category created.';
+        this.createForm.reset();
         this.load();
       },
       error: (err) => {
-        this.error = err?.error?.message || 'Error creating category.';
+        this.error = err?.error?.message || 'Create failed.';
+      }
+    });
+  }
+
+  startEdit(c: Category) {
+    this.message = '';
+    this.error = '';
+
+    this.editingId = c._id;
+
+    this.editForm.setValue({
+      name: c.name,
+      description: c.description || ''
+    });
+  }
+
+  cancelEdit() {
+    this.editingId = null;
+    this.editForm.reset();
+  }
+
+  saveEdit() {
+    if (!this.editingId) return;
+
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    this.api.updateCategory(this.editingId, this.editForm.value).subscribe({
+      next: () => {
+        this.message = 'Category updated.';
+        this.editingId = null;
+        this.load();
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Update failed.';
+      }
+    });
+  }
+
+  remove(id: string) {
+    if (!confirm('Delete this category?')) return;
+
+    this.api.deleteCategory(id).subscribe({
+      next: () => {
+        this.message = 'Category deleted.';
+        this.load();
+      },
+      error: (err) => {
+        this.error = err?.error?.message || 'Delete failed.';
       }
     });
   }

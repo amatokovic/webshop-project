@@ -1,9 +1,19 @@
-const router = require("express").Router();
-const { getAll, create } = require("../controllers/category.controller");
+const express = require("express");
+const router = express.Router();
+
+const {
+    getCategories,
+    createCategory,
+    updateCategory,
+    deleteCategory
+} = require("../controllers/category.controller");
+
 const { requireAuth, requireAdmin } = require("../middleware/auth");
 
-router.get("/", getAll);
+router.get("/", getCategories);
 
-router.post("/", requireAuth, requireAdmin, create);
+router.post("/", requireAuth, requireAdmin, createCategory);
+router.put("/:id", requireAuth, requireAdmin, updateCategory);
+router.delete("/:id", requireAuth, requireAdmin, deleteCategory);
 
 module.exports = router;

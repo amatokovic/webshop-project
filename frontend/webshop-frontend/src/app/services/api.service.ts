@@ -83,6 +83,14 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/categories`, data);
   }
 
+  updateCategory(id: string, data: { name: string; description?: string }) {
+    return this.http.put(`${this.baseUrl}/categories/${id}`, data);
+  }
+
+  deleteCategory(id: string) {
+    return this.http.delete(`${this.baseUrl}/categories/${id}`);
+  }
+
   getEurToUsdRate(): Observable<{ base: string; date: string; rate: number }> {
     return this.http.get<{ base: string; date: string; rate: number }>(`${this.baseUrl}/rates/eur-usd`);
   }
