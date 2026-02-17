@@ -99,7 +99,11 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/orders`);
   }
 
-  getUsers(): Observable<UserRow[]> {
-    return this.http.get<UserRow[]>(`${this.baseUrl}/users`);
+  getUsers() {
+    return this.http.get<any[]>(`${this.baseUrl}/users`);
+  }
+
+  deleteUser(id: string) {
+    return this.http.delete(`${this.baseUrl}/users/${id}`);
   }
 }
