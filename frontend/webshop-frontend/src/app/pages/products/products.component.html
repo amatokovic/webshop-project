@@ -33,10 +33,17 @@
 
           <button class="btn btn-success ms-2"
                   (click)="addToCart(p)"
-                  [disabled]="p.stock <= 0">
+                  [disabled]="p.stock <= 0 || cart.isAtMax(p._id, p.stock)">
             Add to cart
           </button>
 
+          <div class="small text-warning mt-1" *ngIf="cart.isAtMax(p._id, p.stock) && p.stock > 0">
+            In cart: max {{ p.stock }}
+          </div>
+
+          <div class="small text-danger mt-1" *ngIf="p.stock <= 0">
+            Out of stock
+          </div>
         </div>
       </div>
     </div>

@@ -31,12 +31,16 @@
         <input class="form-control"
                type="number"
                min="1"
-               [max]="i.stock"
+               [max]="i.stock || null"
                [value]="i.quantity"
                (input)="updateQty(i.productId, $any($event.target).value)">
 
-        <div class="small text-warning" *ngIf="i.quantity >= i.stock">
-          Max available: {{ i.stock }}
+        <div class="small text-warning mt-1" *ngIf="qtyWarnings[i.productId]">
+          {{ qtyWarnings[i.productId] }}
+        </div>
+
+        <div class="small text-muted mt-1" *ngIf="!qtyWarnings[i.productId] && i.stock">
+          On stock: {{ i.stock }}
         </div>
       </td>
 

@@ -12,6 +12,8 @@ export class CartComponent {
   error = '';
   loading = false;
 
+  qtyWarnings: Record<string, string> = {};
+
   constructor(
     public cart: CartService,
     private api: ApiService,
@@ -29,10 +31,27 @@ export class CartComponent {
 
   updateQty(id: string, value: string) {
     const q = Number(value);
-    this.cart.setQuantity(id, Number.isFinite(q) ? q : 1);
+    const item = this.items().find(i => i.productId === id);
+    const stock = Number(item?.stock ?? 0);
+
+    if (!Number.isFinite(q) || q < 1) {
+      this.cart.setQuantity(id, 1);
+      this.qtyWarnings[id] = '';
+      return;
+    }
+
+    if (Number.isFinite(stock) && stock > 0 && q > stock) {
+      this.qtyWarnings[id] = `Max on stock: ${stock}`;
+      this.cart.setQuantity(id, stock);
+      return;
+    }
+
+    this.qtyWarnings[id] = '';
+    this.cart.setQuantity(id, q);
   }
 
   remove(id: string) {
+    delete this.qtyWarnings[id];
     this.cart.remove(id);
   }
 

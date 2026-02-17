@@ -7,7 +7,7 @@ export interface CartItem {
   price: number;
   imageUrl?: string;
   quantity: number;
-  stock: number;
+  stock: number; // ✅ obavezno
 }
 
 @Injectable({ providedIn: 'root' })
@@ -18,8 +18,13 @@ export class CartService {
     return this.read();
   }
 
-  getCount(): number {
-    return this.read().reduce((sum, i) => sum + i.quantity, 0);
+  getQuantity(productId: string): number {
+    return this.read().find(i => i.productId === productId)?.quantity ?? 0;
+  }
+
+  isAtMax(productId: string, stock: number): boolean {
+    if (!Number.isFinite(stock) || stock <= 0) return true;
+    return this.getQuantity(productId) >= stock;
   }
 
   add(product: Product, quantity: number = 1) {
@@ -27,18 +32,20 @@ export class CartService {
     const existing = items.find(i => i.productId === product._id);
 
     const stock = Number(product.stock ?? 0);
-    const safeQty = Math.max(1, Math.min(quantity, stock || 1));
+    if (!Number.isFinite(stock) || stock <= 0) return;
+
+    const addQty = Math.max(1, Math.min(quantity, stock));
 
     if (existing) {
       existing.stock = stock;
-      existing.quantity = Math.min(existing.quantity + safeQty, existing.stock);
+      existing.quantity = Math.min(existing.quantity + addQty, stock);
     } else {
       items.push({
         productId: product._id,
         name: product.name,
         price: product.price,
         imageUrl: product.imageUrl,
-        quantity: safeQty,
+        quantity: addQty,
         stock
       });
     }
@@ -59,7 +66,13 @@ export class CartService {
       return;
     }
 
-    it.quantity = Math.min(q, it.stock);
+    const stock = Number(it.stock ?? 0);
+    if (!Number.isFinite(stock) || stock <= 0) {
+      it.quantity = q;
+    } else {
+      it.quantity = Math.min(q, stock);
+    }
+
     this.write(items);
   }
 
@@ -76,16 +89,17 @@ export class CartService {
     return this.read().reduce((sum, i) => sum + i.price * i.quantity, 0);
   }
 
-  toOrderItems(): { productId: string; quantity: number }[] {
-    return this.getItems().map(i => ({
-      productId: i.productId,
-      quantity: i.quantity
-    }));
-  }
-
   private read(): CartItem[] {
     try {
-      return JSON.parse(localStorage.getItem(this.key) || '[]');
+      const raw = JSON.parse(localStorage.getItem(this.key) || '[]');
+      return (Array.isArray(raw) ? raw : []).map((x: any) => ({
+        productId: String(x.productId),
+        name: String(x.name ?? ''),
+        price: Number(x.price ?? 0),
+        imageUrl: x.imageUrl || '',
+        quantity: Math.max(1, Number(x.quantity ?? 1)),
+        stock: Number.isFinite(Number(x.stock)) ? Number(x.stock) : 0,
+      }));
     } catch {
       return [];
     }
@@ -93,5 +107,9 @@ export class CartService {
 
   private write(items: CartItem[]) {
     localStorage.setItem(this.key, JSON.stringify(items));
+  }
+
+  toOrderItems() {
+    return this.read().map(i => ({ productId: i.productId, quantity: i.quantity }));
   }
 }
