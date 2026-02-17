@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService, Product } from '../../services/api.service';
+import { ApiService, Product, Category } from '../../services/api.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -9,12 +9,21 @@ import { AuthService } from '../../services/auth.service';
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
+  categories: Category[] = [];
+
   loading = true;
   error = '';
   rateUsd: number | null = null;
 
   qty: Record<string, number> = {};
   qtyError: Record<string, string> = {};
+
+  filters = {
+    q: '',
+    minPrice: null as number | null,
+    maxPrice: null as number | null,
+    categoryId: ''
+  };
 
   constructor(
     private api: ApiService,
@@ -26,17 +35,17 @@ export class ProductsComponent implements OnInit {
     this.api.getProducts().subscribe({
       next: (data) => {
         this.products = data;
-        // init qty=1 za sve proizvode
-        for (const p of data) {
-          this.qty[p._id] = 1;
-          this.qtyError[p._id] = '';
-        }
         this.loading = false;
       },
       error: () => {
         this.error = 'Failed to load products.';
         this.loading = false;
       }
+    });
+
+    this.api.getCategories().subscribe({
+      next: (cats) => (this.categories = cats),
+      error: () => (this.categories = [])
     });
 
     this.api.getEurToUsdRate().subscribe({
@@ -49,24 +58,47 @@ export class ProductsComponent implements OnInit {
     return typeof p.categoryId === 'string' ? p.categoryId : p.categoryId.name;
   }
 
-  onQtyInput(p: Product, rawValue: string) {
-    const n = Number(rawValue);
+  getCategoryId(p: Product): string {
+    return typeof p.categoryId === 'string' ? p.categoryId : p.categoryId._id;
+  }
 
-    if (!Number.isFinite(n)) {
-      this.qty[p._id] = 1;
-      this.qtyError[p._id] = 'Enter a number.';
+  filteredProducts(): Product[] {
+    const q = (this.filters.q || '').trim().toLowerCase();
+    const min = this.filters.minPrice;
+    const max = this.filters.maxPrice;
+    const cat = this.filters.categoryId;
+
+    return this.products.filter(p => {
+      const nameOk = !q || p.name.toLowerCase().includes(q);
+
+      const minOk = (min === null || min === undefined) ? true : p.price >= min;
+      const maxOk = (max === null || max === undefined) ? true : p.price <= max;
+
+      const catOk = !cat || this.getCategoryId(p) === cat;
+
+      return nameOk && minOk && maxOk && catOk;
+    });
+  }
+
+  clearFilters() {
+    this.filters = { q: '', minPrice: null, maxPrice: null, categoryId: '' };
+  }
+
+  onQtyInput(p: Product, value: string) {
+    const num = Number(value);
+    const v = Number.isFinite(num) ? Math.floor(num) : 1;
+
+    this.qty[p._id] = v;
+
+    if (p.stock <= 0) {
+      this.qtyError[p._id] = 'Out of stock.';
       return;
     }
-
-    const q = Math.floor(n);
-    this.qty[p._id] = q;
-
-    if (q < 1) {
+    if (v < 1) {
       this.qtyError[p._id] = 'Quantity must be at least 1.';
       return;
     }
-
-    if (q > p.stock) {
+    if (v > p.stock) {
       this.qtyError[p._id] = `Only ${p.stock} in stock.`;
       return;
     }
@@ -75,14 +107,18 @@ export class ProductsComponent implements OnInit {
   }
 
   canAdd(p: Product): boolean {
-    const q = this.qty[p._id] ?? 1;
-    return q >= 1 && q <= p.stock && !this.qtyError[p._id];
+    if (!this.auth.isUser()) return false;
+    if (p.stock <= 0) return false;
+
+    const v = this.qty[p._id] ?? 1;
+    if (v < 1) return false;
+    if (v > p.stock) return false;
+
+    return true;
   }
 
   addToCart(p: Product) {
-    const q = this.qty[p._id] ?? 1;
-    if (!this.canAdd(p)) return;
-
-    this.cart.add(p, q);
+    const v = this.qty[p._id] ?? 1;
+    this.cart.add(p, v);
   }
 }
