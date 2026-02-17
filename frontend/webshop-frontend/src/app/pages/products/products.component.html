@@ -19,6 +19,26 @@
         <a class="btn btn-primary" [routerLink]="['/products', p._id]">
           View details
         </a>
+        <div class="d-flex align-items-center gap-2 mt-2">
+
+          <input
+            #qty
+            type="number"
+            class="form-control"
+            style="max-width: 90px"
+            min="1"
+            [max]="p.stock"
+            value="1"
+          />
+
+          <button
+            class="btn btn-success"
+            (click)="cart.add(p, +qty.value)"
+            [disabled]="p.stock === 0"
+          >
+            Add to cart
+          </button>
+        </div>
       </div>
     </div>
   </div>

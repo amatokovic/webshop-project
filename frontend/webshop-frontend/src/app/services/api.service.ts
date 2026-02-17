@@ -41,6 +41,13 @@ export interface Order {
   createdAt: string;
 }
 
+export interface UserRow {
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -95,5 +102,9 @@ export class ApiService {
 
   updateOrderStatus(orderId: string, status: string) {
     return this.http.patch<Order>(`${this.baseUrl}/orders/${orderId}/status`, { status });
+  }
+
+  getUsers(): Observable<UserRow[]> {
+    return this.http.get<UserRow[]>(`${this.baseUrl}/users`);
   }
 }

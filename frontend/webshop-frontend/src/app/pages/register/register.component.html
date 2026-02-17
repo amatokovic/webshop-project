@@ -3,6 +3,15 @@
 <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
 <form [formGroup]="form" (ngSubmit)="submit()" class="col-md-6">
+
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input class="form-control" formControlName="name" type="text" />
+    <div class="text-danger mt-1" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+      Name must be at least 2 characters.
+    </div>
+  </div>
+
   <div class="mb-3">
     <label class="form-label">Email</label>
     <input class="form-control" formControlName="email" type="email" />

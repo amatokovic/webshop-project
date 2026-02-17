@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService, Product } from '../../services/api.service';
+import { CartService } from '../../services/cart.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-products',
@@ -11,7 +13,11 @@ export class ProductsComponent implements OnInit {
   error = '';
   rateUsd: number | null = null;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    public cart: CartService,
+    public auth: AuthService,
+  ) {}
 
   ngOnInit(): void {
     this.api.getProducts().subscribe({

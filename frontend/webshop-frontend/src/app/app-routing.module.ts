@@ -13,6 +13,8 @@ import { MyOrdersComponent } from './pages/my-orders/my-orders.component';
 import { AdminOrdersComponent } from './pages/admin-orders/admin-orders.component';
 import { AdminGuard } from './guards/admin.guard';
 import { CategoriesComponent } from './pages/categories/categories.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -23,8 +25,9 @@ const routes: Routes = [
   { path: 'categories', component: CategoriesComponent },
   { path: 'admin/products', component: AdminProductsComponent, canActivate: [AdminGuard] },
   { path: 'cart', component: CartComponent },
-  { path: 'my-orders', component: MyOrdersComponent },
+  { path: 'my-orders', component: MyOrdersComponent, canActivate: [AuthGuard] },
   { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AdminGuard] },
+  { path: 'admin/users', component: AdminUsersComponent, canActivate: [AdminGuard] },
   { path: '**', redirectTo: '' }
 ];
 
