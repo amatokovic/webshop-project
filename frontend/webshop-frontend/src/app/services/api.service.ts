@@ -88,7 +88,7 @@ export class ApiService {
     return this.http.get<{ base: string; date: string; rate: number }>(`${this.baseUrl}/rates/eur-usd`);
   }
 
-  createOrder(payload: any) {
+  createOrder(payload: { paymentMethod: string; items: { productId: string; quantity: number }[] }) {
     return this.http.post(`${this.baseUrl}/orders`, payload);
   }
 

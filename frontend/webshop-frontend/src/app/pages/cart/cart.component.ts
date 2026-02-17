@@ -53,8 +53,8 @@ export class CartComponent {
     this.loading = true;
 
     const payload = {
-      items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
-      paymentMethod: 'cod'
+      paymentMethod: 'cod',
+      items: this.cart.toOrderItems(),
     };
 
     this.api.createOrder(payload).subscribe({

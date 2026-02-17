@@ -73,7 +73,10 @@ export class CartService {
   }
 
   toOrderItems(): { productId: string; quantity: number }[] {
-    return this.getItems().map(i => ({ productId: i.productId, quantity: i.quantity }));
+    return this.getItems().map(i => ({
+      productId: i.productId,
+      quantity: i.quantity
+    }));
   }
 
   private read(): CartItem[] {
