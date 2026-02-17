@@ -72,7 +72,6 @@
         <h5 class="card-title">{{ p.name }}</h5>
 
         <p class="card-text mb-1"><b>Price:</b> {{ p.price | priceUsd: rateUsd }}</p>
-        <p class="card-text mb-1"><b>Stock:</b> {{ p.stock }}</p>
         <p class="card-text"><b>Category:</b> {{ getCategoryName(p) }}</p>
 
         <div class="mt-auto d-flex gap-2 flex-wrap">
