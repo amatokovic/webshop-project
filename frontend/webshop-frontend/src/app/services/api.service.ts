@@ -36,7 +36,6 @@ export interface Order {
     lineTotal: number;
   }>;
   total: number;
-  status: string;
   paymentMethod: string;
   createdAt: string;
 }
@@ -98,10 +97,6 @@ export class ApiService {
 
   getAllOrders() {
     return this.http.get<any[]>(`${this.baseUrl}/orders`);
-  }
-
-  updateOrderStatus(orderId: string, status: string) {
-    return this.http.patch<Order>(`${this.baseUrl}/orders/${orderId}/status`, { status });
   }
 
   getUsers(): Observable<UserRow[]> {
