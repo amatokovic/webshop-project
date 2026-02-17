@@ -13,6 +13,9 @@ export class ProductsComponent implements OnInit {
   error = '';
   rateUsd: number | null = null;
 
+  qty: Record<string, number> = {};
+  qtyError: Record<string, string> = {};
+
   constructor(
     private api: ApiService,
     public cart: CartService,
@@ -23,6 +26,11 @@ export class ProductsComponent implements OnInit {
     this.api.getProducts().subscribe({
       next: (data) => {
         this.products = data;
+        // init qty=1 za sve proizvode
+        for (const p of data) {
+          this.qty[p._id] = 1;
+          this.qtyError[p._id] = '';
+        }
         this.loading = false;
       },
       error: () => {
@@ -41,8 +49,40 @@ export class ProductsComponent implements OnInit {
     return typeof p.categoryId === 'string' ? p.categoryId : p.categoryId.name;
   }
 
-  addToCart(p: any) {
-    this.cart.add(p, 1);
+  onQtyInput(p: Product, rawValue: string) {
+    const n = Number(rawValue);
+
+    if (!Number.isFinite(n)) {
+      this.qty[p._id] = 1;
+      this.qtyError[p._id] = 'Enter a number.';
+      return;
+    }
+
+    const q = Math.floor(n);
+    this.qty[p._id] = q;
+
+    if (q < 1) {
+      this.qtyError[p._id] = 'Quantity must be at least 1.';
+      return;
+    }
+
+    if (q > p.stock) {
+      this.qtyError[p._id] = `Only ${p.stock} in stock.`;
+      return;
+    }
+
+    this.qtyError[p._id] = '';
   }
 
+  canAdd(p: Product): boolean {
+    const q = this.qty[p._id] ?? 1;
+    return q >= 1 && q <= p.stock && !this.qtyError[p._id];
+  }
+
+  addToCart(p: Product) {
+    const q = this.qty[p._id] ?? 1;
+    if (!this.canAdd(p)) return;
+
+    this.cart.add(p, q);
+  }
 }
